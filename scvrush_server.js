@@ -59,8 +59,7 @@ UserKeys = new Meteor.Collection("user_keys");
 
     _updateKeyWithData(clientKey, userData);
 
-
-    return { key: clientKey, data: userData };
+    return { client_key: clientKey, user_data: userData };
   };
 
   var _authenticationFailed = function() {
