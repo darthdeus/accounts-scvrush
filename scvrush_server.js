@@ -51,7 +51,6 @@ UserKeys = new Meteor.Collection("user_keys");
     } else {
       throw new Meteor.Error(404, "user data not found");
     }
-
   };
 
   var _authenticationSuccessful = function(apiKey) {
@@ -59,9 +58,9 @@ UserKeys = new Meteor.Collection("user_keys");
     var userData  = _fetchUserData(apiKey);
 
     _updateKeyWithData(clientKey, userData);
-    console.log("new client key", clientKey);
 
-    return clientKey;
+
+    return { key: clientKey, data: userData };
   };
 
   var _authenticationFailed = function() {
@@ -72,7 +71,6 @@ UserKeys = new Meteor.Collection("user_keys");
   Meteor.methods({
     authenticate: function(login, password) {
       var response = Scvrush.authenticate(login, password);
-
       return _authenticated(response);
     }
   });

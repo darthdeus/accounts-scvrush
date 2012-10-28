@@ -6,6 +6,7 @@ Package.on_use(function(api) {
   api.use('accounts-base', ['client', 'server']);
   api.use('http', ['client', 'server']);
   api.use('templating', 'client');
+  api.use('localstorage-polyfill', 'client');
 
   api.add_files(
     ['scvrush_login.html', 'scvrush_configure.js'],
