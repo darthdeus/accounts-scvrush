@@ -1,19 +1,54 @@
 (function () {
-  var _authenticated = function(err, res) {
-    var data = JSON.stringify(res);
-    localStorage.setItem("user_session", data);
+  // Session.set("user_session", localStorage.getItem("user_session"));
+
+  var _session = function() {
+    return Session.get("user_session");
+  };
+
+  var _restoreSession = function(data) {
     Session.set("user_session", data);
   };
 
+  var _setLocalId = function(id) {
+    localStorage.setItem("client_key", id);
+  };
+
+  var _localId = function() {
+    return localStorage.getItem("client_key");
+  };
+
+  var _restored = function(err, res) {
+    if (err) throw err;
+    _restoreSession(res);
+  };
+
+  Meteor.call("restoreSession", _localId(), _restored);
+
+  Accounts.scvrush.username = function() {
+    var data = _session();
+
+    if (data && data.user_data) {
+      return data.user_data.username;
+    } else {
+      return null;
+    }
+  };
+
+  var _authenticated = function(err, res) {
+    _setLocalId(res.client_key);
+    _restoreSession(res);
+  };
+
   var _logout = function() {
-    localStorage.setItem("user_session", null);
-    Session.set("user_session", null);
-    console.log('logged out');
+    _setLocalId(null);
+    _restoreSession(null);
   };
 
   Template.scvrushLogin.isLogged = function() {
-    return !!Session.get("user_session");
+    return !!_session();
   };
+
+  Template.scvrushLogin.username = Accounts.scvrush.username;
 
   Template.scvrushLogin.events = {
     "submit form": function(event) {
@@ -23,12 +58,12 @@
 
       Meteor.call("authenticate", login, password, _authenticated);
     },
+
     "click .logout": function(event) {
       event.preventDefault();
       _logout();
     }
   };
 
-  Session.set("user_session", localStorage.getItem("user_session"));
 })();
 

@@ -67,10 +67,28 @@ UserKeys = new Meteor.Collection("user_keys");
     return null;
   };
 
+  // var _dataForClientKey()
+
   Meteor.methods({
     authenticate: function(login, password) {
       var response = Scvrush.authenticate(login, password);
-      return _authenticated(response);
+      response = _authenticated(response);
+
+      this.setUserId(response.client_key);
+      console.log("user id set to ", response.client_key);
+
+      return response;
+    },
+
+    restoreSession: function(clientKey) {
+      var user_data = UserKeys.findOne({client_key: clientKey});
+
+      if (user_data) {
+        return { client_key: user_data.client_key, user_data: user_data.data };
+      } else {
+        return null;
+      }
+
     }
   });
 
