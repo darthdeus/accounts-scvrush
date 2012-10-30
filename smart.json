@@ -1,0 +1,8 @@
+{
+  "name": "accounts-scvrush",
+  "description": "Simple authentication for SCV Rush",
+  "homepage": "http://github.com/darthdeus/accounts-scvrush",
+  "author": "Jakub Arnold <darthdeus@gmail.com>",
+  "version": "0.0.0",
+  "git": "https://github.com/darthdeus/accounts-scvrush.git"
+}
