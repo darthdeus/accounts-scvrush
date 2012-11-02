@@ -14,7 +14,8 @@ if (typeof Scvrush === "undefined") Scvrush = {};
   };
 
   var _localId = Scvrush.clientKey = function() {
-    return localStorage.getItem("client_key");
+    var key = localStorage.getItem("client_key");
+    return (key === "null") ? null : key;
   };
 
   var _restored = function(err, res) {
