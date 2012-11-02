@@ -20,6 +20,7 @@ if (typeof Scvrush === "undefined") Scvrush = {};
   var _restored = function(err, res) {
     if (err) throw err;
     _restoreSession(res);
+    Meteor.call("connected", _localId());
   };
 
   Meteor.call("restoreSession", _localId(), _restored);
