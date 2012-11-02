@@ -1,6 +1,6 @@
-(function () {
-  // Session.set("user_session", localStorage.getItem("user_session"));
+if (typeof Scvrush === "undefined") Scvrush = {};
 
+(function () {
   var _session = function() {
     return Session.get("user_session");
   };
@@ -13,7 +13,7 @@
     localStorage.setItem("client_key", id);
   };
 
-  var _localId = function() {
+  var _localId = Scvrush.clientKey = function() {
     return localStorage.getItem("client_key");
   };
 

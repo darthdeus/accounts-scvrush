@@ -16,6 +16,17 @@ Scvrush.userData = function(apiKey) {
   return response;
 };
 
+// Returns username for a given client key,
+// or null if none found.
+Scvrush.usernameForKey = function(clientKey) {
+  var user_info = UserKeys.findOne({client_key: clientKey});
+  if (user_info && user_info.data) {
+    return user_info.data.username;
+  } else {
+    return null;
+  }
+};
+
 UserKeys = new Meteor.Collection("user_keys");
 
 (function() {
