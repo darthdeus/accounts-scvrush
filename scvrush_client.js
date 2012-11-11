@@ -26,7 +26,20 @@ if (typeof Scvrush === "undefined") Scvrush = {};
 
   Meteor.call("restoreSession", _localId(), _restored);
 
-  Accounts.scvrush.username = function() {
+  var _isAdminCallback = function(err, value) {
+    console.log("admincallback", err, value);
+    Session.set("is_admin", value);
+  };
+
+  Scvrush.isAdmin = function(force) {
+    if (!Session.get("is_admin") || force) {
+      Meteor.call("isAdmin", _localId(), _isAdminCallback);
+    }
+
+    return Session.get("is_admin");
+  };
+
+  Scvrush.username = function() {
     var data = _session();
 
     if (data && data.user_data) {
@@ -39,18 +52,21 @@ if (typeof Scvrush === "undefined") Scvrush = {};
   var _authenticated = function(err, res) {
     _setLocalId(res.client_key);
     _restoreSession(res);
+    Scvrush.isAdmin();
   };
 
-  var _logout = function() {
+  var _logout = Scvrush.logout = function() {
     _setLocalId(null);
     _restoreSession(null);
+    Meteor.call("logout");
+    Scvrush.isAdmin(true);
   };
 
   Template.scvrushLogin.isLogged = function() {
     return !!_session();
   };
 
-  Template.scvrushLogin.username = Accounts.scvrush.username;
+  Template.scvrushLogin.username = Scvrush.username;
 
   Template.scvrushLogin.events = {
     "submit form": function(event) {

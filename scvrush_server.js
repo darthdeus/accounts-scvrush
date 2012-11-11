@@ -16,6 +16,13 @@ Scvrush.userData = function(apiKey) {
   return response;
 };
 
+Scvrush.isAdmin = function(clientKey) {
+  var user = UserKeys.findOne({client_key: clientKey});
+  var admin = user && !!user.admin;
+  console.log("Admin status for", user, "is", admin);
+  return admin;
+};
+
 // Returns username for a given client key,
 // or null if none found.
 Scvrush.usernameForKey = function(clientKey) {
@@ -44,7 +51,8 @@ UserKeys = new Meteor.Collection("user_keys");
   };
 
   var _updateKeyWithData = function(clientKey, userData) {
-    UserKeys.update({client_key: clientKey}, {$set: { data: userData }});
+    // TODO - fetch the admin flag from API instead
+    UserKeys.update({client_key: clientKey}, {$set: { admin: true, data: userData }});
   };
 
   var _authenticated = function(response) {
@@ -95,12 +103,19 @@ UserKeys = new Meteor.Collection("user_keys");
       var user_data = UserKeys.findOne({client_key: clientKey});
 
       if (user_data) {
+        this.setUserId(clientKey);
         return { client_key: user_data.client_key, user_data: user_data.data };
       } else {
         return null;
       }
 
+    },
+
+    isAdmin: function(clientKey) {
+      console.log("isAdmin for", clientKey);
+      return Scvrush.isAdmin(clientKey);
     }
+
   });
 
 })()
