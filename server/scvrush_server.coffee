@@ -1,14 +1,14 @@
 @Scvrush ||= {}
 
-Scvrush.isAdmin = (clientKey) ->
-  user = UserKeys.findOne(client_key: clientKey)
+Scvrush.isAdmin = (client_key) ->
+  user = UserKeys.findOne(client_key: client_key)
   user && !!user.admin
 
 
 # Returns username for a given client key,
 # or null if none found.
-Scvrush.usernameForKey = (clientKey) ->
-  user_info = UserKeys.findOne(client_key: clientKey)
+Scvrush.usernameForKey = (client_key) ->
+  user_info = UserKeys.findOne(client_key: client_key)
   if user_info and user_info.data
     user_info.data.username
   else
@@ -16,19 +16,19 @@ Scvrush.usernameForKey = (clientKey) ->
 
 UserKeys = new Meteor.Collection("user_keys")
 
-# Scvrush.DB.generateClientKey = (apiKey) ->
+# Scvrush.DB.generateclient_key = (api_key) ->
 
 do ->
   # Generate a new client key and delete all
   # previously paired client keys
   #
   # Returns the new client_key
-  _generateClientKey = (apiKey) ->
-    UserKeys.remove api_key: apiKey
+  _generateclient_key = (api_key) ->
+    UserKeys.remove api_key: api_key
     uuid = Meteor.uuid()
 
     UserKeys.insert
-      api_key: apiKey
+      api_key: api_key
       client_key: uuid
 
     uuid
@@ -50,22 +50,14 @@ do ->
       api_key = Scvrush.API.authenticate(login, password)
 
       if api_key
-        if Scvrush.DB.isBanned(api_key)
-          return -1
-        else
-          user_info = Scvrush.DB.createKeyWithData(apiKey)
-
-        @setUserId user_info.client_key
-
-        return user_info
-
+        return Scvrush.DB.credentialsValid(api_key)
       else
         return false
 
-    restoreSession: (clientKey) ->
-      user_data = UserKeys.findOne(client_key: clientKey)
+    restoreSession: (client_key) ->
+      user_data = UserKeys.findOne(client_key: client_key)
       if user_data
-        @setUserId clientKey
+        @setUserId client_key
 
         return {
           client_key: user_data.client_key
@@ -75,5 +67,5 @@ do ->
       else
         null
 
-    isAdmin: (clientKey) ->
-      Scvrush.isAdmin clientKey
+    isAdmin: (client_key) ->
+      Scvrush.isAdmin client_key

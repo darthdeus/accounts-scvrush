@@ -6,9 +6,9 @@ Scvrush.DB ||= {}
 #
 # Also updates his user data with profile information
 # from the main profile.
-Scvrush.DB.createKeyWithData = (apiKey) ->
-  clientKey = Scvrush.DB.generateClientKey(apiKey)
-  userData  = Scvrush.API.fetchData(apiKey)
+Scvrush.DB.createKeyWithData = (api_key) ->
+  clientKey = Scvrush.DB.generateClientKey(api_key)
+  userData  = Scvrush.API.fetchData(api_key)
   Scvrush.DB.updateKeyWithData clientKey, userData
 
   return {
@@ -17,11 +17,11 @@ Scvrush.DB.createKeyWithData = (apiKey) ->
   }
 
 # Generate new client key and assign it to a given API key
-Scvrush.DB.generateClientKey = (apiKey) ->
-  UserKeys.remove api_key: apiKey
+Scvrush.DB.generateClientKey = (api_key) ->
+  UserKeys.remove api_key: api_key
 
   uuid = Meteor.uuid()
-  UserKeys.insert api_key: apiKey, client_key: uuid
+  UserKeys.insert api_key: api_key, client_key: uuid
   uuid
 
 Scvrush.DB.updateKeyWithData = (clientKey, userData) ->
@@ -29,3 +29,17 @@ Scvrush.DB.updateKeyWithData = (clientKey, userData) ->
   update_attributes = $set: { admin: true , data: userData }
 
   UserKeys.update client_key: clientKey, update_attributes
+
+Scvrush.DB.isBanned = (api_key) ->
+  false
+
+Scvrush.DB.credentialsValid = (api_key) ->
+  if Scvrush.DB.isBanned(api_key)
+    return -1
+  else
+    user_info = Scvrush.DB.createKeyWithData(api_key)
+    console.log "user_info is", user_info
+
+    @setUserId user_info.client_key
+
+    return user_info

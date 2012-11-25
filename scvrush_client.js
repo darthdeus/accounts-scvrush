@@ -1,4 +1,4 @@
-if (typeof Scvrush === "undefined") Scvrush = {};
+if (typeof Scvrush === "undefined") this.Scvrush = {};
 
 (function () {
   var _session = function() {
@@ -52,7 +52,7 @@ if (typeof Scvrush === "undefined") Scvrush = {};
   var _authenticated = function(err, res) {
     if (res === -1) {
       // TODO - user is banned
-    } (res === false) {
+    } else if (res === false) {
       // TODO - authentication failed
     } else {
       _setLocalId(res.client_key);

@@ -15,6 +15,7 @@ Package.on_use(function(api) {
 
   api.add_files('scvrush_common.js', ['client', 'server']);
 
+  api.add_files('server/api.coffee',            'server');
   api.add_files('server/db.coffee',             'server');
   api.add_files('server/scvrush_server.coffee', 'server');
 
