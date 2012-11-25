@@ -27,7 +27,6 @@ if (typeof Scvrush === "undefined") Scvrush = {};
   Meteor.call("restoreSession", _localId(), _restored);
 
   var _isAdminCallback = function(err, value) {
-    console.log("admincallback", err, value);
     Session.set("is_admin", value);
   };
 
