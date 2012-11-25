@@ -39,6 +39,7 @@ if (typeof Scvrush === "undefined") Scvrush = {};
   };
 
   Scvrush.username = function() {
+    debugger
     var data = _session();
 
     if (data && data.user_data) {
@@ -49,9 +50,15 @@ if (typeof Scvrush === "undefined") Scvrush = {};
   };
 
   var _authenticated = function(err, res) {
-    _setLocalId(res.client_key);
-    _restoreSession(res);
-    Scvrush.isAdmin();
+    if (res === -1) {
+      // TODO - user is banned
+    } (res === false) {
+      // TODO - authentication failed
+    } else {
+      _setLocalId(res.client_key);
+      _restoreSession(res);
+      Scvrush.isAdmin();
+    }
   };
 
   var _logout = Scvrush.logout = function() {
