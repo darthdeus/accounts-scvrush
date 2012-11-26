@@ -4,7 +4,6 @@ Scvrush.isAdmin = (client_key) ->
   user = UserKeys.findOne(client_key: client_key)
   user && !!user.admin
 
-
 # Returns username for a given client key,
 # or null if none found.
 Scvrush.usernameForKey = (client_key) ->
@@ -19,26 +18,11 @@ UserKeys = new Meteor.Collection("user_keys")
 # Scvrush.DB.generateclient_key = (api_key) ->
 
 do ->
-  # Generate a new client key and delete all
-  # previously paired client keys
-  #
-  # Returns the new client_key
-  _generateclient_key = (api_key) ->
-    UserKeys.remove api_key: api_key
-    uuid = Meteor.uuid()
-
-    UserKeys.insert
-      api_key: api_key
-      client_key: uuid
-
-    uuid
-
   _authenticated = (response) ->
     if response.statusCode is 200
       _authenticationSuccessful response.data.key
     else
       _authenticationFailed()
-
 
   _authenticationFailed = ->
     console.log "Authentication failed"
@@ -50,12 +34,15 @@ do ->
       api_key = Scvrush.API.authenticate(login, password)
 
       if api_key
-        return Scvrush.DB.credentialsValid(api_key)
+        user_info = Scvrush.DB.credentialsValid(api_key)
+        @setUserId user_info.client_key
+        return user_info
       else
         return false
 
     restoreSession: (client_key) ->
       user_data = UserKeys.findOne(client_key: client_key)
+
       if user_data
         @setUserId client_key
 
@@ -63,7 +50,6 @@ do ->
           client_key: user_data.client_key
           user_data:  user_data.data
         }
-
       else
         null
 

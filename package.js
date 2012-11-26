@@ -19,5 +19,6 @@ Package.on_use(function(api) {
   api.add_files('server/db.coffee',             'server');
   api.add_files('server/scvrush_server.coffee', 'server');
 
-  api.add_files('scvrush_client.js', 'client');
+  // api.add_files('scvrush_client.js', 'client');
+  api.add_files('client/session.coffee', 'client');
 });

@@ -19,10 +19,10 @@ Scvrush.DB.createKeyWithData = (api_key) ->
 # Generate new client key and assign it to a given API key
 Scvrush.DB.generateClientKey = (api_key) ->
   UserKeys.remove api_key: api_key
+  client_key = Meteor.uuid()
+  UserKeys.insert api_key: api_key, client_key: client_key
 
-  uuid = Meteor.uuid()
-  UserKeys.insert api_key: api_key, client_key: uuid
-  uuid
+  return client_key
 
 Scvrush.DB.updateKeyWithData = (clientKey, userData) ->
   # TODO - fetch the admin flag from API instead
@@ -37,9 +37,4 @@ Scvrush.DB.credentialsValid = (api_key) ->
   if Scvrush.DB.isBanned(api_key)
     return -1
   else
-    user_info = Scvrush.DB.createKeyWithData(api_key)
-    console.log "user_info is", user_info
-
-    @setUserId user_info.client_key
-
-    return user_info
+    return Scvrush.DB.createKeyWithData(api_key)
