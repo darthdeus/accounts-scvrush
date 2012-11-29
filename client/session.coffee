@@ -1,6 +1,9 @@
 @Scvrush ||= {}
 Scvrush.Session ||= {}
 
+Bans = new Meteor.Collection "bans"
+Meteor.subscribe "bans"
+
 Scvrush.Session =
   session: ->
     return Session.get "user_session"
@@ -23,6 +26,15 @@ Scvrush.Session =
 Meteor.startup ->
   Meteor.call "restoreSession", Scvrush.Session.clientKey(), Scvrush.Session.restored
 
+  _userBanned = (ban) ->
+    console.log "new ban added"
+    alert("You were banned by a moderator. Come back in 5 minutes.")
+    debugger
+    Scvrush.logout()
+
+  bans = Bans.find({})
+  bans.observe added: _userBanned, changed: _userBanned
+
 _isAdminCallback = (err, value) ->
   Session.set "is_admin", value
 
@@ -41,7 +53,7 @@ Scvrush.username = ->
 
 Scvrush.authenticated = (err, res) ->
   if res == -1
-    alert "You are banned."
+    alert "You are banned. Come back in 5 minutes."
     # TODO - user is banned
   else if res == false
     alert "Wrong login/password."

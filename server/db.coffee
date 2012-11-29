@@ -30,11 +30,25 @@ Scvrush.DB.updateKeyWithData = (clientKey, userData) ->
 
   UserKeys.update client_key: clientKey, update_attributes
 
-Scvrush.DB.isBanned = (api_key) ->
-  false
+Scvrush.DB.isBanned = (username) ->
+  ban = Bans.findOne username: username
+  console.log "trying to check #{username} if user", ban, "is banned", new Date().getTime()
 
-Scvrush.DB.credentialsValid = (api_key) ->
-  if Scvrush.DB.isBanned(api_key)
+  result = ban?.banned_until > new Date().getTime()
+  console.log "user #{username} is banned" if result
+
+  return result
+
+Scvrush.DB.loadDataIfNotBanned = (username, api_key) ->
+  if Scvrush.DB.isBanned(username, api_key)
     return -1
   else
     return Scvrush.DB.createKeyWithData(api_key)
+
+Scvrush.DB.ban = (username) ->
+  end_time = new Date().getTime() + 1000 * 60 * 5
+
+  Bans.remove username: username
+  Bans.insert username: username, banned_until: end_time
+
+  console.log "banned #{username} until", new Date(end_time)

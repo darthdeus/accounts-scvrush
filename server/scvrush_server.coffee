@@ -1,5 +1,12 @@
 @Scvrush ||= {}
 
+UserKeys = new Meteor.Collection("user_keys")
+Bans     = new Meteor.Collection("bans")
+
+Meteor.publish "bans", ->
+  username = Scvrush.usernameForKey(@userId)
+  Bans.find { username: username }, { sort: { created_at: 1 } }
+
 Scvrush.isAdmin = (client_key) ->
   user = UserKeys.findOne(client_key: client_key)
   user && !!user.admin
@@ -12,8 +19,6 @@ Scvrush.usernameForKey = (client_key) ->
     user_info.data.username
   else
     null
-
-UserKeys = new Meteor.Collection("user_keys")
 
 # Scvrush.DB.generateclient_key = (api_key) ->
 
@@ -30,13 +35,18 @@ do ->
 
   Meteor.methods
     # Authenticate the user against the API
-    authenticate: (login, password) ->
-      api_key = Scvrush.API.authenticate(login, password)
+    authenticate: (username, password) ->
+      api_key = Scvrush.API.authenticate(username, password)
 
       if api_key
-        user_info = Scvrush.DB.credentialsValid(api_key)
-        @setUserId user_info.client_key
-        return user_info
+        user_info = Scvrush.DB.loadDataIfNotBanned(username, api_key)
+        console.log "fetched user info", user_info
+
+        if user_info == -1
+          return -1
+        else
+          @setUserId user_info.client_key
+          return user_info
       else
         return false
 
@@ -52,6 +62,14 @@ do ->
         }
       else
         null
+
+    ban: (username) ->
+      if Scvrush.isAdmin @userId
+        Scvrush.DB.ban username
+        console.log "banned #{username}"
+      else
+        console.log "unauthorized ban"
+        # TODO - throw unauthorized exception
 
     isAdmin: (client_key) ->
       Scvrush.isAdmin client_key
