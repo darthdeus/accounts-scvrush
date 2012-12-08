@@ -24,6 +24,13 @@ Scvrush.usernameForKey = (client_key) ->
   else
     null
 
+Scvrush.avatarForKey = (client_key) ->
+  user_info = UserKeys.findOne(client_key: client_key)
+  if user_info and user_info.data
+    user_info.data.gravatar
+  else
+    null
+
 # Scvrush.DB.generateclient_key = (api_key) ->
 
 do ->

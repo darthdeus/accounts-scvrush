@@ -51,6 +51,13 @@ Scvrush.username = ->
   else
     null
 
+Scvrush.avatar = ->
+  data = Scvrush.Session.session()
+  if data && data.user_data
+    data.user_data.gravatar
+  else
+    null
+
 Scvrush.authenticated = (err, res) ->
   if res?.status == "ban"
 
@@ -61,6 +68,7 @@ Scvrush.authenticated = (err, res) ->
     alert "Wrong login/password."
     # TODO - authentication failed
   else
+    window.heartbeat?()
     Scvrush.Session.setLocalId(res.client_key)
     Scvrush.Session.restoreSession(res)
     Scvrush.isAdmin()
