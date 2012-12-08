@@ -8,6 +8,7 @@ Package.on_use(function(api) {
   api.use('templating', 'client');
   api.use('localstorage-polyfill', 'client');
   api.use('coffeescript', ['client', 'server']);
+  api.use('moment', 'client');
 
   api.add_files(
     ['scvrush_login.html', 'scvrush_configure.js'],

@@ -52,8 +52,10 @@ Scvrush.username = ->
     null
 
 Scvrush.authenticated = (err, res) ->
-  if res == -1
-    alert "You are banned. Come back in 5 minutes."
+  if res?.status == "ban"
+
+    minutes = moment(res.ban.banned_until).fromNow()
+    alert "You are banned. Come back #{minutes}."
     # TODO - user is banned
   else if res == false
     alert "Wrong login/password."

@@ -5,7 +5,11 @@ Bans     = new Meteor.Collection("bans")
 
 Meteor.publish "bans", ->
   username = Scvrush.usernameForKey(@userId)
-  Bans.find { username: username }, { sort: { created_at: 1 } }
+  where =
+    banned_until: { $gt: new Date().getTime() },
+    username: username
+
+  Bans.find where, { sort: { created_at: 1 } }
 
 Scvrush.isAdmin = (client_key) ->
   user = UserKeys.findOne(client_key: client_key)
@@ -39,14 +43,15 @@ do ->
       api_key = Scvrush.API.authenticate(username, password)
 
       if api_key
-        user_info = Scvrush.DB.loadDataIfNotBanned(username, api_key)
-        console.log "fetched user info", user_info
+        try
+          user_info = Scvrush.DB.loadDataIfNotBanned(username, api_key)
+          console.log "fetched user info", user_info
 
-        if user_info == -1
-          return -1
-        else
           @setUserId user_info.client_key
           return user_info
+
+        catch ban
+          return status: "ban", ban: ban
       else
         return false
 

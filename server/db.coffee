@@ -37,13 +37,14 @@ Scvrush.DB.isBanned = (username) ->
   result = ban?.banned_until > new Date().getTime()
   console.log "user #{username} is banned" if result
 
+  throw ban if result
+
   return result
 
 Scvrush.DB.loadDataIfNotBanned = (username, api_key) ->
-  if Scvrush.DB.isBanned(username, api_key)
-    return -1
-  else
-    return Scvrush.DB.createKeyWithData(api_key)
+  Scvrush.DB.isBanned(username, api_key)
+
+  return Scvrush.DB.createKeyWithData(api_key)
 
 Scvrush.DB.ban = (username) ->
   end_time = new Date().getTime() + 1000 * 60 * 5
