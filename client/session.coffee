@@ -29,7 +29,6 @@ Meteor.startup ->
   _userBanned = (ban) ->
     console.log "new ban added"
     alert("You were banned by a moderator. Come back in 5 minutes.")
-    debugger
     Scvrush.logout()
 
   bans = Bans.find({})

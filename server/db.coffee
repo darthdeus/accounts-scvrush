@@ -25,9 +25,9 @@ Scvrush.DB.generateClientKey = (api_key) ->
   return client_key
 
 Scvrush.DB.updateKeyWithData = (clientKey, userData) ->
-  admins = ["Vogin", "Dex", "Arnovic", "DeuceSC", "Fluttershy", "cridili", "wham", "izelude", "wolfboy", "darthdeus"]
+  admins = ["vogin", "dex", "arnovic", "deucesc", "fluttershy", "cridili", "wham", "izelude", "wolfboy", "darthdeus"]
 
-  isAdmin = admins.indexOf(userData.username) != -1
+  isAdmin = admins.indexOf(userData.username.toLowerCase()) != -1
   update_attributes = $set: { admin: isAdmin, data: userData }
 
   UserKeys.update client_key: clientKey, update_attributes
